@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Field Manual — ICPA Production Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+--ink:#0F1419;
+--ink-soft:#161D24;
+--paper:#F7F5F0;
+--paper-dim:#EDE9E0;
+--green:#2D9D78;
+--green-soft:#1B5E47;
+--green-glow: rgba(45,157,120,0.18);
+--amber:#E8A23D;
+--amber-glow: rgba(232,162,61,0.15);
+--red:#C4533A;
+--red-glow: rgba(196,83,58,0.15);
+--blue:#4C7BD9;
+--slate:#8A92A0;
+--slate-dim:#5B6371;
+--line: rgba(247,245,240,0.10);
+--mono: 'JetBrains Mono', monospace;
+--sans: 'Inter', sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+background:var(--ink);
+color:var(--paper);
+font-family:var(--sans);
+line-height:1.6;
+-webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--green); color:var(--ink);}
+
+a{color:inherit; text-decoration:none;}
+
+/* ===== Layout shell ===== */
+.shell{
+display:grid;
+grid-template-columns: 260px 1fr 220px;
+max-width:1480px;
+margin:0 auto;
+}
+@media (max-width: 1100px){
+.shell{grid-template-columns: 1fr;}
+.rail-left, .rail-right{display:none;}
+}
+
+/* ===== Left rail nav ===== */
+.rail-left{
+position:sticky; top:0; height:100vh;
+border-right:1px solid var(--line);
+padding:28px 18px;
+overflow-y:auto;
+}
+.rail-brand{
+font-family:var(--mono);
+font-size:11px;
+letter-spacing:0.12em;
+color:var(--green);
+text-transform:uppercase;
+margin-bottom:4px;
+}
+.rail-title{
+font-family:var(--mono);
+font-weight:700;
+font-size:15px;
+color:var(--paper);
+margin-bottom:24px;
+line-height:1.4;
+}
+.nav-group-label{
+font-family:var(--mono);
+font-size:10px;
+letter-spacing:0.1em;
+text-transform:uppercase;
+color:var(--slate-dim);
+margin:18px 0 8px;
+}
+.nav-link{
+display:flex;
+gap:10px;
+align-items:baseline;
+font-size:13px;
+color:var(--slate);
+padding:5px 8px;
+border-radius:5px;
+transition:all .15s ease;
+}
+.nav-link:hover{background:var(--ink-soft); color:var(--paper);}
+.nav-link .qn{
+font-family:var(--mono);
+font-size:10.5px;
+color:var(--green);
+width:22px;
+flex-shrink:0;
+}
+
+/* ===== Right rail: system trace ===== */
+.rail-right{
+position:sticky; top:0; height:100vh;
+border-left:1px solid var(--line);
+padding:28px 16px;
+font-family:var(--mono);
+}
+.trace-label{
+font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+color:var(--slate-dim); margin-bottom:14px;
+}
+.trace-box{
+border:1px solid var(--line);
+border-radius:8px;
+padding:14px;
+background:var(--ink-soft);
+margin-bottom:10px;
+}
+.trace-sys{font-size:10px; color:var(--green); margin-bottom:6px; letter-spacing:.05em;}
+.trace-sys.gold{color:var(--amber);}
+.trace-line{font-size:11px; color:var(--slate); line-height:1.7;}
+.trace-line b{color:var(--paper); font-weight:500;}
+
+/* ===== Main column ===== */
+main{padding: 0 0 120px; min-width:0;}
+
+/* ===== Hero ===== */
+.hero{
+padding: 90px 56px 60px;
+border-bottom:1px solid var(--line);
+position:relative;
+overflow:hidden;
+}
+.hero::before{
+content:"";
+position:absolute; top:-200px; right:-200px;
+width:500px; height:500px; border-radius:50%;
+background: radial-gradient(circle, var(--green-glow), transparent 70%);
+pointer-events:none;
+}
+.hero-eyebrow{
+font-family:var(--mono);
+font-size:12px;
+color:var(--green);
+letter-spacing:.14em;
+text-transform:uppercase;
+margin-bottom:18px;
+display:flex; align-items:center; gap:10px;
+}
+.hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green); box-shadow:0 0 8px var(--green);}
+h1.hero-title{
+font-family:var(--mono);
+font-weight:800;
+font-size:clamp(32px, 5vw, 56px);
+line-height:1.08;
+letter-spacing:-0.01em;
+max-width:880px;
+margin-bottom:22px;
+}
+h1.hero-title .accent{color:var(--green);}
+.hero-sub{
+font-size:17px;
+color:var(--slate);
+max-width:620px;
+margin-bottom:36px;
+}
+.hero-sub b{color:var(--paper); font-weight:600;}
+.hero-stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:1px;
+background:var(--line);
+border:1px solid var(--line);
+border-radius:10px;
+overflow:hidden;
+max-width:760px;
+}
+.stat{background:var(--ink); padding:18px 20px;}
+.stat-num{font-family:var(--mono); font-weight:700; font-size:22px; color:var(--green);}
+.stat-label{font-size:11.5px; color:var(--slate); margin-top:4px;}
+
+/* ===== Section divider for groups ===== */
+.group-divider{
+padding: 44px 56px 8px;
+display:flex; align-items:baseline; gap:14px;
+}
+.group-divider .gd-line{flex:1; height:1px; background:var(--line);}
+.group-divider .gd-label{
+font-family:var(--mono); font-size:11px; letter-spacing:.12em;
+text-transform:uppercase; color:var(--amber); white-space:nowrap;
+}
+
+/* ===== Question card ===== */
+.qcard{
+padding: 40px 56px;
+border-bottom:1px solid var(--line);
+scroll-margin-top:20px;
+}
+.qhead{
+display:flex; align-items:center; gap:14px;
+margin-bottom:18px;
+}
+.qnum{
+font-family:var(--mono);
+font-size:12px; font-weight:700;
+color:var(--ink);
+background:var(--green);
+padding:4px 10px;
+border-radius:5px;
+letter-spacing:.04em;
+}
+.qtitle{
+font-family:var(--mono);
+font-size:clamp(19px,2.4vw,25px);
+font-weight:700;
+color:var(--paper);
+}
+
+/* concept diagram panel (recreated visuals) */
+.panel{
+background:var(--paper);
+color:var(--ink);
+border-radius:12px;
+padding:30px 28px;
+margin-bottom:18px;
+position:relative;
+}
+.panel-cap{
+text-align:center;
+font-size:13px;
+color:#6B7280;
+margin-top:18px;
+}
+
+/* plain-english answer */
+.answer{
+font-size:15.5px;
+color:#D7D3C8;
+background:var(--ink-soft);
+border-left:3px solid var(--green);
+padding:14px 18px;
+border-radius:0 8px 8px 0;
+margin-bottom:20px;
+}
+.answer b{color:var(--paper);}
+
+/* code tabs */
+.codeblock{
+background:#0A0E12;
+border:1px solid var(--line);
+border-radius:10px;
+overflow:hidden;
+margin-bottom:18px;
+}
+.code-tabbar{
+display:flex;
+border-bottom:1px solid var(--line);
+background:var(--ink-soft);
+}
+.code-tab{
+font-family:var(--mono);
+font-size:11.5px;
+padding:9px 16px;
+color:var(--slate-dim);
+border-right:1px solid var(--line);
+}
+.code-tab.py{color:#F2C063;}
+.code-tab.go{color:#5FC9D9;}
+pre{
+margin:0;
+padding:18px 20px;
+overflow-x:auto;
+font-family:var(--mono);
+font-size:12.5px;
+line-height:1.65;
+}
+code{font-family:var(--mono);}
+.tok-kw{color:#C792EA;}
+.tok-str{color:#A8D08D;}
+.tok-com{color:#5B6371;}
+.tok-fn{color:#5FC9D9;}
+.tok-num{color:#F2C063;}
+.tok-type{color:#E8A23D;}
+
+/* production strip */
+.prod{
+display:flex; gap:14px;
+background: linear-gradient(135deg, var(--green-glow), transparent);
+border:1px solid var(--green-soft);
+border-radius:10px;
+padding:16px 18px;
+}
+.prod.gold{background:linear-gradient(135deg, var(--amber-glow), transparent); border-color:#8A6326;}
+.prod-tag{
+font-family:var(--mono);
+font-size:10px;
+font-weight:700;
+letter-spacing:.08em;
+color:var(--green);
+background:rgba(45,157,120,0.15);
+border:1px solid var(--green-soft);
+padding:4px 9px;
+border-radius:5px;
+height:fit-content;
+white-space:nowrap;
+}
+.prod.gold .prod-tag{color:var(--amber); background:rgba(232,162,61,0.12); border-color:#8A6326;}
+.prod-text{font-size:13.5px; color:#C9C5BA; line-height:1.6;}
+.prod-text b{color:var(--paper);}
+
+footer{
+padding:50px 56px;
+text-align:center;
+color:var(--slate-dim);
+font-family:var(--mono);
+font-size:12px;
+}
+
+/* responsive */
+@media (max-width: 700px){
+.hero{padding:60px 22px 40px;}
+.qcard, .group-divider{padding-left:22px; padding-right:22px;}
+.hero-stats{grid-template-columns:repeat(2,1fr);}
+}
+@media (prefers-reduced-motion: reduce){
+html{scroll-behavior:auto;}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- LEFT NAV -->
+<nav class="rail-left">
+<div class="rail-brand">field manual</div>
+<div class="rail-title">LLM &amp; GenAI<br>Engineering Reference</div>
+
+<div class="nav-group-label">Foundations</div>
+<a class="nav-link" href="#q1"><span class="qn">01</span>Large Language Model</a>
+<a class="nav-link" href="#q2"><span class="qn">02</span>Token</a>
+<a class="nav-link" href="#q3"><span class="qn">03</span>Embedding</a>
+<a class="nav-link" href="#q4"><span class="qn">04</span>Attention</a>
+<a class="nav-link" href="#q5"><span class="qn">05</span>Transformer</a>
+<a class="nav-link" href="#q6"><span class="qn">06</span>RoPE</a>
+<a class="nav-link" href="#q7"><span class="qn">07</span>Encoder/Decoder</a>
+
+<div class="nav-group-label">Inference</div>
+<a class="nav-link" href="#q8"><span class="qn">08</span>Context Window</a>
+<a class="nav-link" href="#q9"><span class="qn">09</span>Temperature</a>
+<a class="nav-link" href="#q10"><span class="qn">10</span>Top-k / Top-p</a>
+
+<div class="nav-group-label">RAG &amp; Retrieval</div>
+<a class="nav-link" href="#q11"><span class="qn">11</span>RAG</a>
+<a class="nav-link" href="#q12"><span class="qn">12</span>Vector DB</a>
+<a class="nav-link" href="#q13"><span class="qn">13</span>Prompt vs RAG vs FT</a>
+
+<div class="nav-group-label">Adaptation</div>
+<a class="nav-link" href="#q14"><span class="qn">14</span>Fine-tuning</a>
+<a class="nav-link" href="#q15"><span class="qn">15</span>LoRA / PEFT</a>
+<a class="nav-link" href="#q16"><span class="qn">16</span>RLHF</a>
+
+<div class="nav-group-label">Reliability &amp; Ops</div>
+<a class="nav-link" href="#q17"><span class="qn">17</span>Hallucination</a>
+<a class="nav-link" href="#q18"><span class="qn">18</span>Prompting Styles</a>
+<a class="nav-link" href="#q19"><span class="qn">19</span>Interview Cheat Sheet</a>
+<a class="nav-link" href="#q20"><span class="qn">20</span>Quantization</a>
+</nav>
+
+<!-- MAIN -->
+<main>
+<section class="hero">
+<div class="hero-eyebrow"><span class="dot"></span>Built from 20 interview drills + 2 production systems</div>
+<h1 class="hero-title">Twenty questions every<br><span class="accent">GenAI interviewer</span> asks —<br>answered the way you'd<br>defend them in prod.</h1>
+<p class="hero-sub">A field reference pairing each fundamental with runnable <b>Python</b> and <b>Go</b>, and a trace back to where it actually lived: <b>ICPA</b>'s three-tier claims pipeline, or the <b>Go/gRPC</b> telecom signaling service running 10K+ RPS.</p>
+<div class="hero-stats">
+<div class="stat"><div class="stat-num">91%</div><div class="stat-label">RAGAS faithfulness (from 72%)</div></div>
+<div class="stat"><div class="stat-num">85%</div><div class="stat-label">semantic cache hit rate</div></div>
+<div class="stat"><div class="stat-num">12%</div><div class="stat-label">LLM escalation (from 40%)</div></div>
+<div class="stat"><div class="stat-num">10K+</div><div class="stat-label">RPS, Go/gRPC service</div></div>
+</div>
+</section>
+
+<!-- QUESTION CARDS GET INSERTED HERE -->
+
+<div class="group-divider"><span class="gd-label">01 — Foundations</span><span class="gd-line"></span></div>
+
+<!-- Q1 -->
+<article class="qcard" id="q1">
+<div class="qhead"><span class="qnum">Q1</span><h2 class="qtitle">What is a Large Language Model?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 600 140" width="100%" style="max-width:560px;display:block;margin:0 auto;">
+<rect x="10" y="45" width="140" height="50" rx="8" fill="#EDE9E0"/>
+<text x="80" y="65" text-anchor="middle" font-family="Inter" font-size="12" fill="#0F1419">"The sky</text>
+<text x="80" y="80" text-anchor="middle" font-family="Inter" font-size="12" fill="#0F1419">is ___"</text>
+<line x1="155" y1="70" x2="225" y2="70" stroke="#6B7280" stroke-width="1.5"/>
+<polygon points="225,65 235,70 225,75" fill="#6B7280"/>
+<rect x="235" y="35" width="150" height="70" rx="10" fill="#FFFFFF" stroke="#2D9D78" stroke-width="2"/>
+<text x="310" y="68" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="16" fill="#1B5E47">LLM</text>
+<text x="310" y="86" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#6B7280">next-token predictor</text>
+<line x1="390" y1="70" x2="450" y2="70" stroke="#6B7280" stroke-width="1.5"/>
+<polygon points="450,65 460,70 450,75" fill="#6B7280"/>
+<rect x="460" y="45" width="130" height="50" rx="8" fill="#EDE9E0"/>
+<text x="525" y="65" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="13" fill="#1B5E47">"blue"</text>
+<text x="525" y="82" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">94%</text>
+</svg>
+<div class="panel-cap">Trained to guess the next token, again and again.</div>
+</div>
+<div class="answer">A neural network trained on huge amounts of text to predict the next token. By doing that well repeatedly across trillions of tokens, it implicitly learns <b>grammar, facts, and reasoning patterns</b> — none of which were directly labeled.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">next_token_demo.py</div></div>
+<pre><code><span class="tok-kw">import</span> torch
+<span class="tok-kw">from</span> transformers <span class="tok-kw">import</span> AutoTokenizer, AutoModelForCausalLM
+
+tok = AutoTokenizer.from_pretrained(<span class="tok-str">"gpt2"</span>)
+model = AutoModelForCausalLM.from_pretrained(<span class="tok-str">"gpt2"</span>)
+
+prompt = <span class="tok-str">"The sky is"</span>
+ids = tok(prompt, return_tensors=<span class="tok-str">"pt"</span>).input_ids
+
+<span class="tok-kw">with</span> torch.no_grad():
+logits = model(ids).logits[<span class="tok-num">0</span>, -<span class="tok-num">1</span>] <span class="tok-com"># last-position logits</span>
+probs = torch.softmax(logits, dim=-<span class="tok-num">1</span>)
+top = torch.topk(probs, <span class="tok-num">3</span>)
+
+<span class="tok-kw">for</span> p, i <span class="tok-kw">in</span> <span class="tok-fn">zip</span>(top.values, top.indices):
+<span class="tok-fn">print</span>(tok.decode(i), <span class="tok-fn">round</span>(p.item()*<span class="tok-num">100</span>, <span class="tok-num">1</span>), <span class="tok-str">"%"</span>)
+<span class="tok-com"># blue 71.2 % / a 9.4 % / the 4.1 %</span></code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 3</span>
+<div class="prod-text">The next-token loop is exactly what runs when ICPA escalates to <b>Ollama llama3.2</b> for the ~12% of German insurance emails that fast-path and RAG can't confidently resolve — this is the most expensive tier, which is why the whole pipeline is built to avoid reaching it.</div>
+</div>
+</article>
+
+<!-- Q2 -->
+<article class="qcard" id="q2">
+<div class="qhead"><span class="qnum">Q2</span><h2 class="qtitle">What is a token?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 600 130" width="100%" style="max-width:560px;display:block;margin:0 auto;">
+<text x="300" y="25" text-anchor="middle" font-family="JetBrains Mono" font-size="15" fill="#0F1419">"unbelievable"</text>
+<line x1="300" y1="35" x2="300" y2="55" stroke="#6B7280" stroke-width="1.5"/>
+<polygon points="295,55 300,65 305,55" fill="#6B7280"/>
+<rect x="80" y="70" width="80" height="36" rx="6" fill="#EDE9E0"/>
+<text x="120" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#1B5E47">un</text>
+<rect x="170" y="70" width="100" height="36" rx="6" fill="#EDE9E0"/>
+<text x="220" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#1B5E47">believ</text>
+<rect x="280" y="70" width="80" height="36" rx="6" fill="#EDE9E0"/>
+<text x="320" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#1B5E47">able</text>
+</svg>
+<div class="panel-cap">Words are split into reusable subword pieces.</div>
+</div>
+<div class="answer">The unit an LLM actually reads — usually a <b>subword piece</b>, not a whole word. Text is split into tokens via BPE/SentencePiece, then mapped to integer IDs before anything touches the model.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">tokenize.py</div></div>
+<pre><code><span class="tok-kw">import</span> tiktoken
+enc = tiktoken.encoding_for_model(<span class="tok-str">"gpt-4"</span>)
+
+ids = enc.encode(<span class="tok-str">"unbelievable"</span>)
+<span class="tok-fn">print</span>(ids) <span class="tok-com"># [359, 6517, 712]</span>
+<span class="tok-fn">print</span>([enc.decode([i]) <span class="tok-kw">for</span> i <span class="tok-kw">in</span> ids]) <span class="tok-com"># ['un', 'believ', 'able']</span>
+
+<span class="tok-com"># cost / context-budget check before calling an LLM API</span>
+<span class="tok-kw">def</span> <span class="tok-fn">est_cost</span>(text: <span class="tok-type">str</span>, usd_per_1k=<span class="tok-num">0.03</span>) -> <span class="tok-type">float</span>:
+<span class="tok-kw">return</span> <span class="tok-fn">len</span>(enc.encode(text)) / <span class="tok-num">1000</span> * usd_per_1k</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · ALL TIERS</span>
+<div class="prod-text">Every German-language claims email gets tokenized before it ever touches TF-IDF or embeddings. Token-count budgeting matters because <b>Presidio/spaCy PII anonymization</b> runs pre-tokenization to keep raw PII out of anything that crosses the GDPR data-residency boundary.</div>
+</div>
+</article>
+
+<!-- Q3 -->
+<article class="qcard" id="q3">
+<div class="qhead"><span class="qnum">Q3</span><h2 class="qtitle">What is an embedding?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 600 170" width="100%" style="max-width:560px;display:block;margin:0 auto;">
+<text x="90" y="30" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#0F1419">"cat"</text>
+<line x1="90" y1="38" x2="90" y2="60" stroke="#6B7280" stroke-width="1.5"/>
+<polygon points="85,60 90,70 95,60" fill="#6B7280"/>
+<rect x="20" y="75" width="140" height="34" rx="6" fill="#EDE9E0"/>
+<text x="90" y="97" text-anchor="middle" font-family="JetBrains Mono" font-size="10.5" fill="#1B5E47">[0.2, 0.8, -0.5…]</text>
+<text x="90" y="135" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">similar meaning →</text>
+<text x="90" y="148" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">nearby vectors</text>
+<rect x="260" y="20" width="320" height="135" rx="8" fill="none" stroke="#D8D4C8" stroke-width="1.5"/>
+<circle cx="350" cy="60" r="4.5" fill="#2D9D78"/><text x="350" y="48" text-anchor="middle" font-family="Inter" font-size="10" fill="#374151">cat</text>
+<circle cx="400" cy="75" r="4.5" fill="#2D9D78"/><text x="425" y="78" font-family="Inter" font-size="10" fill="#374151">dog</text>
+<circle cx="530" cy="120" r="4.5" fill="#4C7BD9"/><text x="545" y="123" font-family="Inter" font-size="10" fill="#374151">car</text>
+</svg>
+<div class="panel-cap">Meaning as a point in space.</div>
+</div>
+<div class="answer">A vector (list of numbers) that captures meaning. Similar things sit close together — <b>'cat' lands near 'dog', far from 'car'</b> — measured with cosine similarity or dot product.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">embed.py</div></div>
+<pre><code><span class="tok-kw">from</span> sentence_transformers <span class="tok-kw">import</span> SentenceTransformer
+<span class="tok-kw">import</span> numpy <span class="tok-kw">as</span> np
+
+model = SentenceTransformer(<span class="tok-str">"sentence-transformers/all-MiniLM-L6-v2"</span>)
+vecs = model.encode([<span class="tok-str">"cat"</span>, <span class="tok-str">"dog"</span>, <span class="tok-str">"car"</span>])
+
+<span class="tok-kw">def</span> <span class="tok-fn">cosine</span>(a, b):
+<span class="tok-kw">return</span> np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+<span class="tok-fn">print</span>(<span class="tok-fn">cosine</span>(vecs[<span class="tok-num">0</span>], vecs[<span class="tok-num">1</span>])) <span class="tok-com"># cat·dog ~0.62</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">cosine</span>(vecs[<span class="tok-num">0</span>], vecs[<span class="tok-num">2</span>])) <span class="tok-com"># cat·car ~0.18</span></code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 2</span>
+<div class="prod-text"><b>Cohere multilingual embeddings</b> turn each German claims email into a vector before it's matched against ChromaDB. Multilingual was non-negotiable — German insurance terminology needed embeddings trained across languages, not English-only.</div>
+</div>
+</article>
+
+<!-- Q4 -->
+<article class="qcard" id="q4">
+<div class="qhead"><span class="qnum">Q4</span><h2 class="qtitle">What is the attention mechanism?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 600 150" width="100%" style="max-width:560px;display:block;margin:0 auto;">
+<text x="300" y="20" text-anchor="middle" font-family="Inter" font-size="11" fill="#6B7280">the word "sat" looks at the others</text>
+<g font-family="Inter" font-size="13" fill="#0F1419">
+<rect x="20" y="45" width="70" height="36" rx="7" fill="#EDE9E0"/><text x="55" y="68" text-anchor="middle">the</text>
+<rect x="110" y="45" width="70" height="36" rx="7" fill="#EDE9E0"/><text x="145" y="68" text-anchor="middle">cat</text>
+<rect x="200" y="45" width="70" height="36" rx="7" fill="#EDE9E0"/><text x="235" y="68" text-anchor="middle" fill="#1B5E47" font-weight="700">sat</text>
+<rect x="290" y="45" width="70" height="36" rx="7" fill="#EDE9E0"/><text x="325" y="68" text-anchor="middle">on</text>
+<rect x="380" y="45" width="70" height="36" rx="7" fill="#EDE9E0"/><text x="415" y="68" text-anchor="middle">mat</text>
+</g>
+<line x1="55" y1="90" x2="235" y2="90" stroke="#2D9D78" stroke-width="3"/>
+<line x1="145" y1="95" x2="235" y2="95" stroke="#2D9D78" stroke-width="2"/>
+<line x1="235" y1="100" x2="415" y2="100" stroke="#2D9D78" stroke-width="1"/>
+</svg>
+<div class="panel-cap">Thicker link = more attention. Context, captured.</div>
+</div>
+<div class="answer">It lets every token look at every other token and weigh how relevant each one is. This is how the model resolves <b>context and coreference</b> — what "sat" relates to, what "it" refers to.</div>
+
+<div class="codeblock">
+<div class="code-tabbar">
+<div class="code-tab py">attention.py</div>
+</div>
+<pre><code><span class="tok-kw">import</span> torch, math
+
+<span class="tok-kw">def</span> <span class="tok-fn">scaled_dot_product_attention</span>(Q, K, V, mask=<span class="tok-kw">None</span>):
+d_k = Q.size(-<span class="tok-num">1</span>)
+scores = Q @ K.transpose(-<span class="tok-num">2</span>, -<span class="tok-num">1</span>) / math.sqrt(d_k)
+<span class="tok-kw">if</span> mask <span class="tok-kw">is</span> <span class="tok-kw">not</span> <span class="tok-kw">None</span>:
+scores = scores.masked_fill(mask == <span class="tok-num">0</span>, <span class="tok-kw">float</span>(<span class="tok-str">"-inf"</span>))
+weights = torch.softmax(scores, dim=-<span class="tok-num">1</span>)
+<span class="tok-kw">return</span> weights @ V, weights
+
+<span class="tok-com"># Q,K,V: [batch, seq_len, d_k]</span>
+out, attn_map = scaled_dot_product_attention(Q, K, V)</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 2</span>
+<div class="prod-text">Self-attention inside the embedding model is what makes "die Versicherung" and "der Vertrag" resolve to the same claim-type cluster in <b>ChromaDB</b> — context-aware similarity beats keyword matching for German compound nouns.</div>
+</div>
+</article>
+
+<!-- Q5 -->
+<article class="qcard" id="q5">
+<div class="qhead"><span class="qnum">Q5</span><h2 class="qtitle">What is a Transformer?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 400 220" width="100%" style="max-width:340px;display:block;margin:0 auto;">
+<rect x="60" y="10" width="180" height="36" rx="7" fill="#EDE9E0"/><text x="150" y="33" text-anchor="middle" font-family="Inter" font-size="12">output</text>
+<line x1="150" y1="56" x2="150" y2="74" stroke="#6B7280" stroke-width="1.5"/><polygon points="145,74 150,84 155,74" fill="#6B7280"/>
+<rect x="40" y="86" width="220" height="44" rx="8" fill="#FFFFFF" stroke="#4C7BD9" stroke-width="1.5"/>
+<text x="150" y="105" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#1d4ed8">Attention</text>
+<text x="150" y="120" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#6B7280">+ Feed-Forward</text>
+<line x1="150" y1="130" x2="150" y2="146" stroke="#6B7280" stroke-width="1.5"/><polygon points="145,146 150,156 155,146" fill="#6B7280"/>
+<rect x="40" y="158" width="220" height="44" rx="8" fill="#FFFFFF" stroke="#2D9D78" stroke-width="1.5"/>
+<text x="150" y="177" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#1B5E47">Attention</text>
+<text x="150" y="192" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#6B7280">+ Feed-Forward</text>
+<text x="320" y="120" font-family="JetBrains Mono" font-weight="700" font-size="20" fill="#1B5E47">× N</text>
+<text x="320" y="138" font-family="Inter" font-size="10" fill="#6B7280">layers</text>
+</svg>
+<div class="panel-cap">A stack of N identical blocks, repeated.</div>
+</div>
+<div class="answer">The architecture behind modern LLMs: a stack of identical blocks, each pairing <b>self-attention</b> with a small <b>feed-forward network</b>, repeated N times (commonly 32–96+ layers).</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">transformer_block.py</div></div>
+<pre><code><span class="tok-kw">import</span> torch.nn <span class="tok-kw">as</span> nn
+
+<span class="tok-kw">class</span> <span class="tok-fn">TransformerBlock</span>(nn.Module):
+<span class="tok-kw">def</span> <span class="tok-fn">__init__</span>(self, d_model=<span class="tok-num">768</span>, n_heads=<span class="tok-num">12</span>, d_ff=<span class="tok-num">3072</span>):
+<span class="tok-fn">super</span>().__init__()
+self.attn = nn.MultiheadAttention(d_model, n_heads, batch_first=<span class="tok-kw">True</span>)
+self.ff = nn.Sequential(
+nn.Linear(d_model, d_ff), nn.GELU(), nn.Linear(d_ff, d_model)
+)
+self.ln1, self.ln2 = nn.LayerNorm(d_model), nn.LayerNorm(d_model)
+
+<span class="tok-kw">def</span> <span class="tok-fn">forward</span>(self, x, mask=<span class="tok-kw">None</span>):
+a, _ = self.attn(x, x, x, attn_mask=mask)
+x = self.ln1(x + a) <span class="tok-com"># residual + norm</span>
+x = self.ln2(x + self.ff(x)) <span class="tok-com"># residual + norm</span>
+<span class="tok-kw">return</span> x</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 2/3</span>
+<div class="prod-text">Both the <b>Cohere embedding model</b> and <b>llama3.2</b> are transformer stacks under the hood — the architecture is shared, only the training objective and head differ between "embed for retrieval" and "generate a reply."</div>
+</div>
+</article>
+
+<!-- Q6 -->
+<article class="qcard" id="q6">
+<div class="qhead"><span class="qnum">Q6</span><h2 class="qtitle">What is positional encoding / RoPE?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 500 170" width="100%" style="max-width:460px;display:block;margin:0 auto;">
+<text x="120" y="25" text-anchor="middle" font-family="Inter" font-size="11" fill="#6B7280">position 2</text>
+<text x="380" y="25" text-anchor="middle" font-family="Inter" font-size="11" fill="#6B7280">position 5</text>
+<circle cx="120" cy="95" r="55" fill="none" stroke="#D8D4C8" stroke-width="1.5"/>
+<line x1="120" y1="95" x2="100" y2="45" stroke="#2D9D78" stroke-width="2.5"/>
+<line x1="120" y1="95" x2="135" y2="48" stroke="#4C7BD9" stroke-width="2"/>
+<text x="250" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="#0F1419">=</text>
+<circle cx="380" cy="95" r="55" fill="none" stroke="#D8D4C8" stroke-width="1.5"/>
+<line x1="380" y1="95" x2="335" y2="120" stroke="#2D9D78" stroke-width="2.5"/>
+<line x1="380" y1="95" x2="345" y2="100" stroke="#4C7BD9" stroke-width="2"/>
+</svg>
+<div class="panel-cap">RoPE rotates each token by its position — the model reads the GAP between words.</div>
+</div>
+<div class="answer">Attention is order-blind by default, so position must be injected. <b>RoPE rotates each token's Q/K vectors</b> by an angle proportional to position, so what the model actually reads is the relative <b>distance</b> between tokens, not their absolute index.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">rope.py</div></div>
+<pre><code><span class="tok-kw">import</span> torch
+
+<span class="tok-kw">def</span> <span class="tok-fn">rotary_embed</span>(x, positions, base=<span class="tok-num">10000</span>):
+<span class="tok-com"># x: [seq_len, d_model] (d_model even)</span>
+d = x.shape[-<span class="tok-num">1</span>]
+inv_freq = <span class="tok-num">1.0</span> / (base ** (torch.arange(<span class="tok-num">0</span>, d, <span class="tok-num">2</span>).<span class="tok-fn">float</span>() / d))
+angles = positions[:, <span class="tok-kw">None</span>] * inv_freq[<span class="tok-kw">None</span>, :] <span class="tok-com"># [seq, d/2]</span>
+cos, sin = angles.cos(), angles.sin()
+
+x1, x2 = x[..., ::<span class="tok-num">2</span>], x[..., <span class="tok-num">1</span>::<span class="tok-num">2</span>]
+rotated = torch.stack([x1*cos - x2*sin, x1*sin + x2*cos], dim=-<span class="tok-num">1</span>)
+<span class="tok-kw">return</span> rotated.flatten(-<span class="tok-num">2</span>)</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag gold">GO/GRPC SERVICE</span>
+<div class="prod-text">Not directly used, but the same intuition (relative offset &gt; absolute index) shows up in the telecom service's <b>sliding-window sequence dedup</b> logic for signaling messages, where what matters is the gap between message timestamps, not their raw clock value.</div>
+</div>
+</article>
+
+<!-- Q7 -->
+<article class="qcard" id="q7">
+<div class="qhead"><span class="qnum">Q7</span><h2 class="qtitle">Encoder vs Decoder vs Encoder-Decoder?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 500 140" width="100%" style="max-width:460px;display:block;margin:0 auto;">
+<rect x="15" y="15" width="200" height="80" rx="9" fill="#FFFFFF" stroke="#4C7BD9" stroke-width="1.5"/>
+<text x="115" y="48" text-anchor="middle" font-family="Inter" font-weight="700" font-size="13" fill="#1d4ed8">ENCODER</text>
+<text x="115" y="66" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#374151">reads whole input</text>
+<text x="115" y="80" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#6B7280">at once → BERT</text>
+<rect x="280" y="15" width="200" height="80" rx="9" fill="#FFFFFF" stroke="#2D9D78" stroke-width="1.5"/>
+<text x="380" y="48" text-anchor="middle" font-family="Inter" font-weight="700" font-size="13" fill="#1B5E47">DECODER</text>
+<text x="380" y="66" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#374151">writes left → right</text>
+<text x="380" y="80" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#6B7280">one token at a time → GPT</text>
+</svg>
+<div class="panel-cap">Encoder-decoder (T5) does both: read, then write.</div>
+</div>
+<div class="answer">Encoders read the whole input at once <b>(BERT)</b> — great for understanding/classification. Decoders generate left-to-right <b>(GPT)</b> — great for generation. Encoder-decoders do both <b>(T5)</b> — read fully, then generate.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">encoder_vs_decoder.py</div></div>
+<pre><code><span class="tok-kw">from</span> transformers <span class="tok-kw">import</span> AutoModel, AutoModelForCausalLM, AutoModelForSeq2SeqLM
+
+encoder_only = AutoModel.from_pretrained(<span class="tok-str">"bert-base-uncased"</span>) <span class="tok-com"># classification, embeddings</span>
+decoder_only = AutoModelForCausalLM.from_pretrained(<span class="tok-str">"gpt2"</span>) <span class="tok-com"># generation</span>
+enc_dec = AutoModelForSeq2SeqLM.from_pretrained(<span class="tok-str">"t5-small"</span>) <span class="tok-com"># translation, summarization</span></code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 1/2</span>
+<div class="prod-text">ICPA leans <b>encoder-only</b> for everything that isn't final generation — Cohere's embedding model and the spaCy NER pipeline are both encoder-style "understand, don't generate." Only Tier 3 needs a decoder, which is exactly why it's the expensive fallback.</div>
+</div>
+</article>
+
+<div class="group-divider"><span class="gd-label">02 — Inference</span><span class="gd-line"></span></div>
+
+<!-- Q8 -->
+<article class="qcard" id="q8">
+<div class="qhead"><span class="qnum">Q8</span><h2 class="qtitle">What is the context window?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 560 110" width="100%" style="max-width:520px;display:block;margin:0 auto;">
+<text x="280" y="16" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#6B7280">a long stream of tokens</text>
+<g>
+<rect x="10" y="30" width="34" height="34" rx="5" fill="#EDE9E0"/>
+<rect x="50" y="30" width="34" height="34" rx="5" fill="#EDE9E0"/>
+<rect x="90" y="30" width="34" height="34" rx="5" fill="#EDE9E0"/>
+<rect x="130" y="26" width="290" height="42" rx="7" fill="none" stroke="#2D9D78" stroke-width="2.5"/>
+<rect x="140" y="30" width="34" height="34" rx="5" fill="#D9F0E6"/>
+<rect x="180" y="30" width="34" height="34" rx="5" fill="#D9F0E6"/>
+<rect x="220" y="30" width="34" height="34" rx="5" fill="#D9F0E6"/>
+<rect x="260" y="30" width="34" height="34" rx="5" fill="#D9F0E6"/>
+<rect x="300" y="30" width="34" height="34" rx="5" fill="#D9F0E6"/>
+<rect x="340" y="30" width="34" height="34" rx="5" fill="#D9F0E6"/>
+<rect x="380" y="30" width="34" height="34" rx="5" fill="#D9F0E6"/>
+<rect x="430" y="30" width="34" height="34" rx="5" fill="#EDE9E0"/>
+<rect x="470" y="30" width="34" height="34" rx="5" fill="#EDE9E0"/>
+<rect x="510" y="30" width="34" height="34" rx="5" fill="#EDE9E0"/>
+</g>
+<text x="275" y="92" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#1B5E47">context window</text>
+</svg>
+<div class="panel-cap">Max tokens the model can see at once (prompt + reply). Older tokens fall outside and are forgotten.</div>
+</div>
+<div class="answer">The maximum number of tokens a model can consider at once — <b>prompt plus reply combined</b>. Anything beyond it gets dropped, which is why retrieval and summarization exist as workarounds.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">budget_check.py</div></div>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">fits_in_window</span>(history_tokens: <span class="tok-type">int</span>, new_msg_tokens: <span class="tok-type">int</span>,
+max_window=<span class="tok-num">8192</span>, reserve_for_reply=<span class="tok-num">512</span>) -> <span class="tok-type">bool</span>:
+used = history_tokens + new_msg_tokens
+<span class="tok-kw">return</span> used + reserve_for_reply &lt;= max_window
+
+<span class="tok-com"># sliding-window truncation when history grows too large</span>
+<span class="tok-kw">def</span> <span class="tok-fn">truncate_history</span>(messages: <span class="tok-type">list</span>, max_tokens: <span class="tok-type">int</span>, token_counter):
+kept, total = [], <span class="tok-num">0</span>
+<span class="tok-kw">for</span> m <span class="tok-kw">in</span> <span class="tok-fn">reversed</span>(messages): <span class="tok-com"># keep most recent first</span>
+t = token_counter(m[<span class="tok-str">"content"</span>])
+<span class="tok-kw">if</span> total + t &gt; max_tokens: <span class="tok-kw">break</span>
+kept.append(m); total += t
+<span class="tok-kw">return</span> <span class="tok-fn">list</span>(<span class="tok-fn">reversed</span>(kept))</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 3</span>
+<div class="prod-text">Context budget is why Tier 2's retrieval matters so much — only the <b>top-k reranked chunks</b> from ChromaDB get passed into llama3.2's prompt, never the full claim history, to leave headroom for the response and keep latency predictable.</div>
+</div>
+</article>
+
+<!-- Q9 -->
+<article class="qcard" id="q9">
+<div class="qhead"><span class="qnum">Q9</span><h2 class="qtitle">What is temperature?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 500 150" width="100%" style="max-width:460px;display:block;margin:0 auto;">
+<text x="115" y="18" text-anchor="middle" font-family="Inter" font-weight="600" font-size="11.5" fill="#1B5E47">LOW temperature</text>
+<text x="385" y="18" text-anchor="middle" font-family="Inter" font-weight="600" font-size="11.5" fill="#1d4ed8">HIGH temperature</text>
+<rect x="60" y="70" width="20" height="14" fill="#D8D4C8"/>
+<rect x="90" y="70" width="20" height="14" fill="#D8D4C8"/>
+<rect x="120" y="35" width="22" height="49" fill="#2D9D78"/>
+<rect x="150" y="70" width="20" height="14" fill="#D8D4C8"/>
+<text x="115" y="100" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#6B7280">focused, repeatable</text>
+<rect x="320" y="55" width="22" height="34" fill="#4C7BD9"/>
+<rect x="350" y="42" width="22" height="47" fill="#4C7BD9"/>
+<rect x="380" y="35" width="22" height="54" fill="#4C7BD9"/>
+<rect x="410" y="48" width="22" height="41" fill="#4C7BD9"/>
+<text x="375" y="100" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#6B7280">diverse, creative, riskier</text>
+</svg>
+<div class="panel-cap">Temperature = the randomness knob.</div>
+</div>
+<div class="answer">A knob on randomness applied during sampling. <b>Low temperature</b> (0–0.3) gives focused, repeatable answers; <b>high temperature</b> (0.8–1.2) gives more diverse and creative — and riskier — ones.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">temperature.py</div></div>
+<pre><code><span class="tok-kw">import</span> torch
+
+<span class="tok-kw">def</span> <span class="tok-fn">sample_with_temperature</span>(logits, temperature=<span class="tok-num">1.0</span>):
+<span class="tok-kw">if</span> temperature == <span class="tok-num">0</span>:
+<span class="tok-kw">return</span> torch.argmax(logits) <span class="tok-com"># greedy, deterministic</span>
+scaled = logits / temperature
+probs = torch.softmax(scaled, dim=-<span class="tok-num">1</span>)
+<span class="tok-kw">return</span> torch.multinomial(probs, num_samples=<span class="tok-num">1</span>)
+
+<span class="tok-com"># API call: deterministic for extraction, creative for drafting</span>
+extraction_resp = client.messages.create(model=<span class="tok-str">"claude-sonnet-4-6"</span>,
+temperature=<span class="tok-num">0.0</span>, max_tokens=<span class="tok-num">500</span>, messages=[...])
+draft_resp = client.messages.create(model=<span class="tok-str">"claude-sonnet-4-6"</span>,
+temperature=<span class="tok-num">0.8</span>, max_tokens=<span class="tok-num">500</span>, messages=[...])</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 3</span>
+<div class="prod-text">llama3.2 runs at <b>low, near-deterministic temperature</b> for claims replies — insurance correspondence needs consistency across runs, not creative variation. A reproducible wrong answer is debuggable; a random one isn't.</div>
+</div>
+</article>
+
+<!-- Q10 -->
+<article class="qcard" id="q10">
+<div class="qhead"><span class="qnum">Q10</span><h2 class="qtitle">Top-k vs Top-p (nucleus) sampling?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 540 150" width="100%" style="max-width:500px;display:block;margin:0 auto;">
+<text x="270" y="16" text-anchor="middle" font-family="Inter" font-size="10.5" fill="#6B7280">next-token choices, sorted by probability</text>
+<line x1="245" y1="25" x2="245" y2="100" stroke="#4C7BD9" stroke-dasharray="3,3" stroke-width="1.3"/>
+<rect x="70" y="35" width="34" height="65" fill="#2D9D78"/><text x="87" y="115" text-anchor="middle" font-family="Inter" font-size="10">blue</text>
+<rect x="115" y="50" width="34" height="50" fill="#2D9D78"/><text x="132" y="115" text-anchor="middle" font-family="Inter" font-size="10">grey</text>
+<rect x="160" y="62" width="34" height="38" fill="#2D9D78"/><text x="177" y="115" text-anchor="middle" font-family="Inter" font-size="10">dark</text>
+<rect x="215" y="80" width="30" height="20" fill="#D8D4C8"/><text x="230" y="115" text-anchor="middle" font-family="Inter" font-size="10">red</text>
+<rect x="255" y="85" width="30" height="15" fill="#D8D4C8"/><text x="270" y="115" text-anchor="middle" font-family="Inter" font-size="10">hot</text>
+<rect x="295" y="90" width="30" height="10" fill="#D8D4C8"/><text x="310" y="115" text-anchor="middle" font-family="Inter" font-size="10">vast</text>
+<text x="245" y="132" text-anchor="middle" font-family="Inter" font-size="10" fill="#4C7BD9">cut-off</text>
+</svg>
+<div class="panel-cap">Top-k keeps the k best · Top-p keeps the top by probability mass.</div>
+</div>
+<div class="answer">Both trim the next-token candidate pool before sampling. <b>Top-k</b> keeps the k most likely tokens flat; <b>top-p</b> keeps the smallest set whose cumulative probability adds up to p — adapting to how confident the distribution is.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">topk_topp.py</div></div>
+<pre><code><span class="tok-kw">import</span> torch
+
+<span class="tok-kw">def</span> <span class="tok-fn">top_k_filter</span>(logits, k=<span class="tok-num">50</span>):
+v, _ = torch.topk(logits, k)
+threshold = v[..., -<span class="tok-num">1</span>, <span class="tok-kw">None</span>]
+<span class="tok-kw">return</span> torch.where(logits &lt; threshold, <span class="tok-kw">float</span>(<span class="tok-str">"-inf"</span>), logits)
+
+<span class="tok-kw">def</span> <span class="tok-fn">top_p_filter</span>(logits, p=<span class="tok-num">0.9</span>):
+sorted_logits, sorted_idx = torch.sort(logits, descending=<span class="tok-kw">True</span>)
+cum_probs = torch.cumsum(torch.softmax(sorted_logits, dim=-<span class="tok-num">1</span>), dim=-<span class="tok-num">1</span>)
+remove = cum_probs &gt; p
+remove[..., <span class="tok-num">1</span>:] = remove[..., :-<span class="tok-num">1</span>].clone() <span class="tok-com"># keep first token over p</span>
+remove[..., <span class="tok-num">0</span>] = <span class="tok-kw">False</span>
+sorted_logits[remove] = <span class="tok-kw">float</span>(<span class="tok-str">"-inf"</span>)
+<span class="tok-kw">return</span> sorted_logits.scatter(-<span class="tok-num">1</span>, sorted_idx, sorted_logits)</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 3</span>
+<div class="prod-text">Top-p is set conservatively for claims replies — a narrow nucleus keeps the LLM from drifting into plausible-but-wrong phrasing, which directly feeds the <b>RAGAS faithfulness</b> metric the team tracks per release.</div>
+</div>
+</article>
+
+<div class="group-divider"><span class="gd-label">03 — RAG &amp; Retrieval</span><span class="gd-line"></span></div>
+
+<!-- Q11 -->
+<article class="qcard" id="q11">
+<div class="qhead"><span class="qnum">Q11</span><h2 class="qtitle">What is RAG?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 540 130" width="100%" style="max-width:500px;display:block;margin:0 auto;">
+<rect x="10" y="40" width="110" height="48" rx="8" fill="#EDE9E0"/>
+<text x="65" y="68" text-anchor="middle" font-family="Inter" font-size="12">question</text>
+<line x1="125" y1="64" x2="180" y2="64" stroke="#6B7280" stroke-width="1.5"/><polygon points="180,59 190,64 180,69" fill="#6B7280"/>
+<rect x="195" y="32" width="120" height="64" rx="9" fill="#FFFFFF" stroke="#4C7BD9" stroke-width="1.5"/>
+<text x="255" y="58" text-anchor="middle" font-family="Inter" font-weight="700" font-size="12" fill="#1d4ed8">Vector DB</text>
+<text x="255" y="76" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">find docs</text>
+<line x1="320" y1="64" x2="375" y2="64" stroke="#6B7280" stroke-width="1.5"/><polygon points="375,59 385,64 375,69" fill="#6B7280"/>
+<rect x="390" y="32" width="110" height="64" rx="9" fill="#FFFFFF" stroke="#2D9D78" stroke-width="1.5"/>
+<text x="445" y="58" text-anchor="middle" font-family="Inter" font-weight="700" font-size="14" fill="#1B5E47">LLM</text>
+<text x="445" y="76" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">+ docs</text>
+<text x="525" y="68" font-family="Inter" font-size="11" fill="#0F1419">answer</text>
+</svg>
+<div class="panel-cap">Fetch real documents, then answer from them — not memory.</div>
+</div>
+<div class="answer">Retrieval-Augmented Generation: fetch relevant documents and feed them into the prompt, so the model answers from <b>real, current, grounded data</b> instead of relying on what it memorized at training time.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">rag_minimal.py</div></div>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">rag_answer</span>(query: <span class="tok-type">str</span>, collection, llm_client, k=<span class="tok-num">5</span>) -> <span class="tok-type">str</span>:
+docs = collection.query(query_texts=[query], n_results=k)
+context = <span class="tok-str">"\n---\n"</span>.join(docs[<span class="tok-str">"documents"</span>][<span class="tok-num">0</span>])
+
+prompt = <span class="tok-str">f"""Answer using ONLY the context below.
+If the answer isn't there, say you don't know.
+
+Context:
+{context}
+
+Question: {query}"""</span>
+
+resp = llm_client.messages.create(
+model=<span class="tok-str">"claude-sonnet-4-6"</span>, max_tokens=<span class="tok-num">600</span>, temperature=<span class="tok-num">0.1</span>,
+messages=[{<span class="tok-str">"role"</span>: <span class="tok-str">"user"</span>, <span class="tok-str">"content"</span>: prompt}],
+)
+<span class="tok-kw">return</span> resp.content[<span class="tok-num">0</span>].text</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 2</span>
+<div class="prod-text">This is ICPA's <b>core production tier</b>: a three-stage LangGraph pipeline — TF-IDF fast path first, then RAG over ChromaDB with a Redis semantic cache in front of it, only falling to llama3.2 generation when retrieval confidence is too low. Getting RAGAS faithfulness from <b>72% → 91%</b> came from tightening this exact loop.</div>
+</div>
+</article>
+
+<!-- Q12 -->
+<article class="qcard" id="q12">
+<div class="qhead"><span class="qnum">Q12</span><h2 class="qtitle">What is a vector database?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 540 150" width="100%" style="max-width:500px;display:block;margin:0 auto;">
+<text x="120" y="60" text-anchor="middle" font-family="Inter" font-size="12" fill="#0F1419">Stores embeddings.</text>
+<text x="120" y="80" text-anchor="middle" font-family="Inter" font-size="12" fill="#0F1419">Returns the</text>
+<text x="120" y="100" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#1B5E47">nearest neighbours</text>
+<text x="120" y="120" text-anchor="middle" font-family="Inter" font-size="12" fill="#0F1419">to your query.</text>
+<rect x="270" y="20" width="250" height="115" rx="8" fill="none" stroke="#D8D4C8" stroke-width="1.5"/>
+<circle cx="305" cy="48" r="4" fill="#9CA3AF"/>
+<circle cx="480" cy="55" r="4" fill="#9CA3AF"/>
+<circle cx="345" cy="78" r="4.5" fill="#2D9D78"/>
+<circle cx="395" cy="80" r="6" fill="#4C7BD9"/><text x="395" y="68" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#1d4ed8">query</text>
+<circle cx="410" cy="92" r="4.5" fill="#2D9D78"/>
+<circle cx="368" cy="100" r="4.5" fill="#2D9D78"/>
+<line x1="395" y1="80" x2="345" y2="78" stroke="#2D9D78" stroke-width="1.2"/>
+<line x1="395" y1="80" x2="410" y2="92" stroke="#2D9D78" stroke-width="1.2"/>
+<line x1="395" y1="80" x2="368" y2="100" stroke="#2D9D78" stroke-width="1.2"/>
+<circle cx="312" cy="118" r="4" fill="#9CA3AF"/>
+<circle cx="460" cy="115" r="4" fill="#9CA3AF"/>
+</svg>
+<div class="panel-cap">A store of embeddings that finds the most similar items to a query.</div>
+</div>
+<div class="answer">A store of embeddings that finds the most similar items to a query using <b>nearest-neighbour search</b> (typically approximate — HNSW). It's the retrieval engine that powers RAG.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">chroma_setup.py</div></div>
+<pre><code><span class="tok-kw">import</span> chromadb
+<span class="tok-kw">from</span> chromadb.utils <span class="tok-kw">import</span> embedding_functions
+
+client = chromadb.PersistentClient(path=<span class="tok-str">"./icpa_vectorstore"</span>)
+cohere_ef = embedding_functions.CohereEmbeddingFunction(
+api_key=API_KEY, model_name=<span class="tok-str">"embed-multilingual-v3.0"</span>
+)
+collection = client.get_or_create_collection(
+name=<span class="tok-str">"claims_de"</span>, embedding_function=cohere_ef,
+metadata={<span class="tok-str">"hnsw:space"</span>: <span class="tok-str">"cosine"</span>}
+)
+
+collection.add(
+documents=[<span class="tok-str">"Schadenmeldung: Wasserschaden im Keller..."</span>],
+metadatas=[{<span class="tok-str">"claim_type"</span>: <span class="tok-str">"water_damage"</span>, <span class="tok-str">"region"</span>: <span class="tok-str">"DE"</span>}],
+ids=[<span class="tok-str">"claim_88213"</span>],
+)
+hits = collection.query(query_texts=[<span class="tok-str">"Rohrbruch Keller"</span>], n_results=<span class="tok-num">5</span>)</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 2</span>
+<div class="prod-text"><b>ChromaDB</b> is the vector store sitting between the TF-IDF fast path and the LLM fallback. A <b>Redis semantic cache</b> sits in front of it and answers ~85% of repeat-pattern queries without a fresh vector search at all.</div>
+</div>
+</article>
+
+<!-- Q13 -->
+<article class="qcard" id="q13">
+<div class="qhead"><span class="qnum">Q13</span><h2 class="qtitle">Prompting vs RAG vs Fine-tuning?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 540 150" width="100%" style="max-width:500px;display:block;margin:0 auto;">
+<rect x="20" y="15" width="500" height="34" rx="6" fill="#EDE9E0"/>
+<text x="40" y="37" font-family="Inter" font-weight="700" font-size="12" fill="#0F1419">PROMPTING</text>
+<text x="500" y="37" text-anchor="end" font-family="Inter" font-size="10.5" fill="#6B7280">change the instructions</text>
+<rect x="20" y="58" width="500" height="34" rx="6" fill="#FFFFFF" stroke="#4C7BD9" stroke-width="1.5"/>
+<text x="40" y="80" font-family="Inter" font-weight="700" font-size="12" fill="#1d4ed8">RAG</text>
+<text x="500" y="80" text-anchor="end" font-family="Inter" font-size="10.5" fill="#6B7280">add external knowledge</text>
+<rect x="20" y="101" width="500" height="34" rx="6" fill="#FFFFFF" stroke="#2D9D78" stroke-width="1.5"/>
+<text x="40" y="123" font-family="Inter" font-weight="700" font-size="12" fill="#1B5E47">FINE-TUNING</text>
+<text x="500" y="123" text-anchor="end" font-family="Inter" font-size="10.5" fill="#6B7280">change the model's weights</text>
+</svg>
+<div class="panel-cap">Try them top to bottom — cheapest and easiest first.</div>
+</div>
+<div class="answer">Prompting changes instructions. RAG adds external knowledge. Fine-tuning changes the model's weights. <b>Reach for them in that order</b> — cost and complexity rise sharply at each step.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">decision_helper.py</div></div>
+<pre><code><span class="tok-kw">def</span> <span class="tok-fn">choose_approach</span>(needs_fresh_data: <span class="tok-type">bool</span>, needs_new_behavior: <span class="tok-type">bool</span>,
+prompt_alone_works: <span class="tok-type">bool</span>) -> <span class="tok-type">str</span>:
+<span class="tok-kw">if</span> prompt_alone_works:
+<span class="tok-kw">return</span> <span class="tok-str">"prompting"</span> <span class="tok-com"># cheapest, instant iteration</span>
+<span class="tok-kw">if</span> needs_fresh_data:
+<span class="tok-kw">return</span> <span class="tok-str">"RAG"</span> <span class="tok-com"># knowledge changes often / is large</span>
+<span class="tok-kw">if</span> needs_new_behavior:
+<span class="tok-kw">return</span> <span class="tok-str">"fine-tuning"</span> <span class="tok-com"># tone, format, domain-specific reasoning</span>
+<span class="tok-kw">return</span> <span class="tok-str">"prompting"</span></code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 1-3</span>
+<div class="prod-text">ICPA's three tiers map almost exactly to this ladder: <b>Tier 1 (TF-IDF)</b> is rule-based, no LLM at all; <b>Tier 2 (RAG)</b> handles ~95% of resolved traffic at zero external LLM cost; <b>Tier 3 (prompted llama3.2)</b> is the last resort. Full fine-tuning was never needed — prompting + RAG closed the gap.</div>
+</div>
+</article>
+
+<div class="group-divider"><span class="gd-label">04 — Adaptation</span><span class="gd-line"></span></div>
+
+<!-- Q14 -->
+<article class="qcard" id="q14">
+<div class="qhead"><span class="qnum">Q14</span><h2 class="qtitle">What is fine-tuning?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 480 110" width="100%" style="max-width:440px;display:block;margin:0 auto;">
+<rect x="10" y="30" width="120" height="50" rx="8" fill="#EDE9E0"/>
+<text x="70" y="50" text-anchor="middle" font-family="Inter" font-size="11.5">pretrained</text>
+<text x="70" y="66" text-anchor="middle" font-family="Inter" font-size="11.5">model</text>
+<text x="150" y="62" text-anchor="middle" font-family="Inter" font-size="18" fill="#0F1419">+</text>
+<rect x="170" y="30" width="120" height="50" rx="8" fill="#FFFFFF" stroke="#4C7BD9" stroke-width="1.5"/>
+<text x="230" y="50" text-anchor="middle" font-family="Inter" font-size="11" fill="#1d4ed8">small focused</text>
+<text x="230" y="66" text-anchor="middle" font-family="Inter" font-size="11" fill="#1d4ed8">dataset</text>
+<line x1="295" y1="55" x2="335" y2="55" stroke="#6B7280" stroke-width="1.5"/><polygon points="335,50 345,55 335,60" fill="#6B7280"/>
+<rect x="350" y="30" width="120" height="50" rx="8" fill="#FFFFFF" stroke="#2D9D78" stroke-width="1.5"/>
+<text x="410" y="50" text-anchor="middle" font-family="Inter" font-weight="600" font-size="11" fill="#1B5E47">specialised</text>
+<text x="410" y="66" text-anchor="middle" font-family="Inter" font-weight="600" font-size="11" fill="#1B5E47">model</text>
+</svg>
+<div class="panel-cap">Keep training on your data so it adapts to your task.</div>
+</div>
+<div class="answer">Continuing to train a pretrained model on a smaller, focused dataset so it specialises in a <b>task, tone, or domain</b> — the weights themselves change.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">finetune_sft.py</div></div>
+<pre><code><span class="tok-kw">from</span> transformers <span class="tok-kw">import</span> Trainer, TrainingArguments
+
+args = TrainingArguments(
+output_dir=<span class="tok-str">"./out"</span>, per_device_train_batch_size=<span class="tok-num">4</span>,
+num_train_epochs=<span class="tok-num">3</span>, learning_rate=<span class="tok-num">2e-5</span>,
+fp16=<span class="tok-kw">True</span>, logging_steps=<span class="tok-num">20</span>, save_strategy=<span class="tok-str">"epoch"</span>,
+)
+trainer = Trainer(model=model, args=args,
+train_dataset=claims_dataset[<span class="tok-str">"train"</span>],
+eval_dataset=claims_dataset[<span class="tok-str">"val"</span>])
+trainer.train()</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag gold">GAP — HONEST FRAMING</span>
+<div class="prod-text">ICPA never needed full fine-tuning — RAG + prompting closed the gap at far lower cost. The honest interview answer: <b>"we evaluated it, but RAG over ChromaDB hit our faithfulness target without the training infra overhead."</b> That's a deliberate engineering call, not a missing skill.</div>
+</div>
+</article>
+
+<!-- Q15 -->
+<article class="qcard" id="q15">
+<div class="qhead"><span class="qnum">Q15</span><h2 class="qtitle">What is LoRA / PEFT?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 480 130" width="100%" style="max-width:440px;display:block;margin:0 auto;">
+<rect x="40" y="30" width="160" height="70" rx="8" fill="#EDE9E0"/>
+<text x="120" y="60" text-anchor="middle" font-family="Inter" font-size="12.5">BIG model</text>
+<text x="120" y="78" text-anchor="middle" font-family="Inter" font-size="11" fill="#6B7280">weights</text>
+<text x="120" y="96" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#9CA3AF">frozen (locked)</text>
+<rect x="280" y="38" width="130" height="54" rx="9" fill="#FFFFFF" stroke="#2D9D78" stroke-width="1.5"/>
+<text x="345" y="60" text-anchor="middle" font-family="Inter" font-weight="600" font-size="11.5" fill="#1B5E47">tiny</text>
+<text x="345" y="76" text-anchor="middle" font-family="Inter" font-weight="600" font-size="11.5" fill="#1B5E47">adapter</text>
+<text x="345" y="108" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#1B5E47">trainable</text>
+</svg>
+<div class="panel-cap">LoRA / PEFT: freeze the giant, train a small add-on. Cheap.</div>
+</div>
+<div class="answer">Parameter-efficient fine-tuning: freeze the big model and train tiny low-rank adapter weights instead. <b>Far cheaper</b>, with almost the same quality as full fine-tuning.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">lora_peft.py</div></div>
+<pre><code><span class="tok-kw">from</span> peft <span class="tok-kw">import</span> LoraConfig, get_peft_model, TaskType
+
+config = LoraConfig(
+task_type=TaskType.CAUSAL_LM, r=<span class="tok-num">8</span>, lora_alpha=<span class="tok-num">16</span>,
+lora_dropout=<span class="tok-num">0.05</span>, target_modules=[<span class="tok-str">"q_proj"</span>, <span class="tok-str">"v_proj"</span>],
+)
+model = get_peft_model(base_model, config)
+model.print_trainable_parameters()
+<span class="tok-com"># trainable params: 4.2M || all params: 7.1B || trainable%: 0.06%</span></code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag gold">GAP — HONEST FRAMING</span>
+<div class="prod-text">Same bridging language as Q14: PEFT wasn't required for ICPA's scale, but it's the right next lever if RAG ever plateaus — <b>cheap enough to justify for a 7B-parameter local model like llama3.2</b> if domain-specific tone became a hard requirement.</div>
+</div>
+</article>
+
+<!-- Q16 -->
+<article class="qcard" id="q16">
+<div class="qhead"><span class="qnum">Q16</span><h2 class="qtitle">What is RLHF?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 500 110" width="100%" style="max-width:460px;display:block;margin:0 auto;">
+<rect x="10" y="35" width="120" height="44" rx="7" fill="#EDE9E0"/>
+<text x="70" y="54" text-anchor="middle" font-family="Inter" font-size="11">model gives</text>
+<text x="70" y="69" text-anchor="middle" font-family="Inter" font-size="11">A vs B</text>
+<line x1="135" y1="57" x2="170" y2="57" stroke="#6B7280" stroke-width="1.5"/><polygon points="170,52 180,57 170,62" fill="#6B7280"/>
+<rect x="185" y="32" width="130" height="50" rx="8" fill="#FFFFFF" stroke="#4C7BD9" stroke-width="1.5"/>
+<text x="250" y="52" text-anchor="middle" font-family="Inter" font-size="11" fill="#1d4ed8">human picks</text>
+<text x="250" y="68" text-anchor="middle" font-family="Inter" font-size="11" fill="#1d4ed8">the better one</text>
+<line x1="320" y1="57" x2="355" y2="57" stroke="#6B7280" stroke-width="1.5"/><polygon points="355,52 365,57 355,62" fill="#6B7280"/>
+<rect x="375" y="35" width="80" height="44" rx="7" fill="#EDE9E0"/>
+<text x="415" y="54" text-anchor="middle" font-family="Inter" font-size="11">reward</text>
+<text x="415" y="69" text-anchor="middle" font-family="Inter" font-size="11">model</text>
+<text x="490" y="60" font-family="Inter" font-size="11" fill="#1B5E47">tune</text>
+</svg>
+<div class="panel-cap">Humans rank answers → model learns to match human preference.</div>
+</div>
+<div class="answer">Reinforcement Learning from Human Feedback: humans rank outputs, a reward model learns their preference, and the LLM is tuned (typically via PPO or DPO) to <b>match that preference</b>.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">dpo_sketch.py</div></div>
+<pre><code><span class="tok-kw">from</span> trl <span class="tok-kw">import</span> DPOTrainer, DPOConfig
+
+<span class="tok-com"># dataset rows: {prompt, chosen, rejected}</span>
+trainer = DPOTrainer(
+model=model, ref_model=ref_model,
+args=DPOConfig(beta=<span class="tok-num">0.1</span>, learning_rate=<span class="tok-num">5e-6</span>),
+train_dataset=preference_pairs,
+)
+trainer.train()</code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag gold">GAP — HONEST FRAMING</span>
+<div class="prod-text">No RLHF run in ICPA — out of scope for an applied claims-automation team. The credible answer: <b>"we relied on the base alignment of llama3.2 and steered behavior through retrieval grounding and prompt constraints rather than retraining the reward signal ourselves."</b></div>
+</div>
+</article>
+
+<div class="group-divider"><span class="gd-label">05 — Reliability &amp; Ops</span><span class="gd-line"></span></div>
+
+<!-- Q17 -->
+<article class="qcard" id="q17">
+<div class="qhead"><span class="qnum">Q17</span><h2 class="qtitle">What is hallucination — and how do you reduce it?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 480 150" width="100%" style="max-width:440px;display:block;margin:0 auto;">
+<rect x="40" y="15" width="400" height="44" rx="8" fill="#FBEAE6" stroke="#C4533A" stroke-width="1.3"/>
+<text x="240" y="38" text-anchor="middle" font-family="Inter" font-size="12.5" fill="#9A3B27">"The Eiffel Tower is in Rome."</text>
+<text x="240" y="53" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#B05A47">confident — but wrong</text>
+<line x1="240" y1="63" x2="240" y2="80" stroke="#6B7280" stroke-width="1.5"/><polygon points="235,80 240,90 245,80" fill="#6B7280"/>
+<rect x="40" y="92" width="400" height="44" rx="8" fill="#E3F3EC" stroke="#2D9D78" stroke-width="1.3"/>
+<text x="240" y="113" text-anchor="middle" font-family="Inter" font-size="12.5" fill="#1B5E47">with sources / RAG / low temp</text>
+<text x="240" y="128" text-anchor="middle" font-family="Inter" font-size="9.5" fill="#1B5E47">grounded — and correct</text>
+</svg>
+<div class="panel-cap">Hallucination = fluent fiction. Ground it in real data.</div>
+</div>
+<div class="answer">When a model states something false with full confidence. Reduce it with <b>RAG/grounding, citations, lower temperature</b>, and explicitly allowing "I don't know" as a valid answer.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">faithfulness_check.py</div></div>
+<pre><code><span class="tok-kw">from</span> ragas <span class="tok-kw">import</span> evaluate
+<span class="tok-kw">from</span> ragas.metrics <span class="tok-kw">import</span> faithfulness, answer_relevancy
+
+results = evaluate(
+dataset=eval_dataset, <span class="tok-com"># {question, answer, contexts, ground_truth}</span>
+metrics=[faithfulness, answer_relevancy],
+)
+<span class="tok-fn">print</span>(results)
+<span class="tok-com"># {'faithfulness': 0.91, 'answer_relevancy': 0.88}</span></code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 2/3</span>
+<div class="prod-text">This is the headline ICPA metric: <b>RAGAS faithfulness went from 72% to 91%</b> through tighter retrieval (better chunking, reranking) and a stricter "answer only from context" system prompt at Tier 3 — directly cutting LLM escalation from 40% to 12%.</div>
+</div>
+</article>
+
+<!-- Q18 -->
+<article class="qcard" id="q18">
+<div class="qhead"><span class="qnum">Q18</span><h2 class="qtitle">Zero-shot vs Few-shot vs Chain-of-Thought?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 500 130" width="100%" style="max-width:460px;display:block;margin:0 auto;">
+<rect x="10" y="20" width="140" height="90" rx="8" fill="#EDE9E0"/>
+<text x="80" y="48" text-anchor="middle" font-family="Inter" font-weight="700" font-size="11.5">ZERO-SHOT</text>
+<text x="80" y="68" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">just ask</text>
+<text x="80" y="86" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#1B5E47">Q → A</text>
+<rect x="180" y="20" width="140" height="90" rx="8" fill="#EDE9E0"/>
+<text x="250" y="48" text-anchor="middle" font-family="Inter" font-weight="700" font-size="11.5">FEW-SHOT</text>
+<text x="250" y="68" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">show examples</text>
+<text x="250" y="86" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#1B5E47">ex, ex, Q → A</text>
+<rect x="350" y="14" width="140" height="100" rx="8" fill="#FFFFFF" stroke="#2D9D78" stroke-width="1.5"/>
+<text x="420" y="40" text-anchor="middle" font-family="Inter" font-weight="700" font-size="11" fill="#1B5E47">CHAIN-OF-</text>
+<text x="420" y="54" text-anchor="middle" font-family="Inter" font-weight="700" font-size="11" fill="#1B5E47">THOUGHT</text>
+<text x="420" y="74" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">reason in steps</text>
+<text x="420" y="93" text-anchor="middle" font-family="JetBrains Mono" font-size="9.5" fill="#1B5E47">Q → steps → A</text>
+</svg>
+<div class="panel-cap">Zero-shot: just ask. Few-shot: examples first. CoT: reason before answering.</div>
+</div>
+<div class="answer">Zero-shot: just ask. Few-shot: give examples first to set the pattern. Chain-of-thought: ask it to <b>reason step by step</b> before producing the final answer — improves accuracy on multi-step problems.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">prompting_styles.py</div></div>
+<pre><code>zero_shot = <span class="tok-str">"Classify this claim: water damage, fire, or theft?\n\n{email}"</span>
+
+few_shot = <span class="tok-str">"""Classify the claim type.
+Email: 'Rohrbruch im Keller...' → water_damage
+Email: 'Einbruch in der Nacht...' → theft
+
+Email: '{email}' →"""</span>
+
+chain_of_thought = <span class="tok-str">"""Classify this claim. First explain your reasoning
+step by step, citing the key phrases, then give the final
+label on the last line as 'ANSWER: <label>'.
+
+Email: {email}"""</span></code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag">ICPA · TIER 3</span>
+<div class="prod-text">Tier 3 prompts use <b>few-shot + light CoT</b> — a handful of anonymized German claim examples plus a short reasoning step before the final classification, which measurably reduced misrouted escalations during evaluation.</div>
+</div>
+</article>
+
+<!-- Q19: Interview Cheat Sheet -->
+<article class="qcard" id="q19">
+<div class="qhead"><span class="qnum">Q19</span><h2 class="qtitle">Interview Cheat Sheet — say it exactly like this</h2></div>
+<div class="answer" style="margin-bottom:22px;">Five answers worth memorizing verbatim — these are the ones interviewers expect crisp, rehearsed delivery on, not improvisation.</div>
+
+<div class="codeblock" style="margin-bottom:14px;">
+<div class="code-tabbar"><div class="code-tab py">Q: What is a Transformer?</div></div>
+<pre style="color:#D7D3C8; white-space:pre-wrap;">"A seq-to-seq model using self-attention to process all tokens in parallel, capturing long-range dependencies without recurrence."</pre>
+</div>
+<div class="codeblock" style="margin-bottom:14px;">
+<div class="code-tabbar"><div class="code-tab py">Q: Explain Q, K, V.</div></div>
+<pre style="color:#D7D3C8; white-space:pre-wrap;">"Q is what I'm looking for, K is what I advertise, V is what I share.
+Attention = softmax(QKᵀ/√d) · V"</pre>
+</div>
+<div class="codeblock" style="margin-bottom:14px;">
+<div class="code-tabbar"><div class="code-tab py">Q: Why Multi-Head Attention?</div></div>
+<pre style="color:#D7D3C8; white-space:pre-wrap;">"Runs H attention heads in parallel — each learns different relationships
+(syntax, coreference, semantics). Outputs concatenated + projected."</pre>
+</div>
+<div class="codeblock" style="margin-bottom:14px;">
+<div class="code-tabbar"><div class="code-tab py">Q: Why not RNNs?</div></div>
+<pre style="color:#D7D3C8; white-space:pre-wrap;">"RNNs process tokens sequentially — slow & forget long context.
+Transformers parallelize fully on GPU and capture full context via attention."</pre>
+</div>
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">Q: What does LayerNorm + Residuals do?</div></div>
+<pre style="color:#D7D3C8; white-space:pre-wrap;">"Residuals prevent vanishing gradients (output = F(x)+x).
+LayerNorm stabilizes activations — enables very deep networks (96+ layers)."</pre>
+</div>
+
+<div class="prod" style="margin-top:18px;">
+<span class="prod-tag">DELIVERY NOTE</span>
+<div class="prod-text">Memorize the shape of these answers, not the exact words — interviewers notice canned delivery. Use them as a <b>structure</b> (definition → mechanism → why it matters), then swap in your own phrasing live.</div>
+</div>
+</article>
+
+<!-- Q20 -->
+<article class="qcard" id="q20">
+<div class="qhead"><span class="qnum">Q20</span><h2 class="qtitle">What is quantization?</h2></div>
+<div class="panel">
+<svg viewBox="0 0 480 110" width="100%" style="max-width:440px;display:block;margin:0 auto;">
+<rect x="20" y="25" width="140" height="60" rx="8" fill="#EDE9E0"/>
+<text x="90" y="50" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="16">32-bit</text>
+<text x="90" y="68" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">weights</text>
+<text x="90" y="82" text-anchor="middle" font-family="Inter" font-size="9" fill="#9CA3AF">big · slow</text>
+<line x1="170" y1="55" x2="290" y2="55" stroke="#2D9D78" stroke-width="1.5"/><polygon points="290,50 300,55 290,60" fill="#2D9D78"/>
+<text x="230" y="45" text-anchor="middle" font-family="Inter" font-size="10" fill="#1B5E47">shrink</text>
+<rect x="310" y="20" width="150" height="70" rx="9" fill="#FFFFFF" stroke="#2D9D78" stroke-width="1.5"/>
+<text x="385" y="50" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="17" fill="#1B5E47">4-bit</text>
+<text x="385" y="70" text-anchor="middle" font-family="Inter" font-size="10" fill="#6B7280">small · fast</text>
+</svg>
+<div class="panel-cap">Lower precision = much smaller model, tiny accuracy cost.</div>
+</div>
+<div class="answer">Storing model weights in lower precision (e.g. 16-bit → 4-bit). The model becomes <b>much smaller and faster</b>, with a small, usually acceptable, accuracy cost.</div>
+
+<div class="codeblock">
+<div class="code-tabbar"><div class="code-tab py">quantize.py</div></div>
+<pre><code><span class="tok-kw">from</span> transformers <span class="tok-kw">import</span> BitsAndBytesConfig, AutoModelForCausalLM
+
+bnb_config = BitsAndBytesConfig(
+load_in_4bit=<span class="tok-kw">True</span>, bnb_4bit_quant_type=<span class="tok-str">"nf4"</span>,
+bnb_4bit_compute_dtype=<span class="tok-str">"bfloat16"</span>,
+)
+model = AutoModelForCausalLM.from_pretrained(
+<span class="tok-str">"meta-llama/Llama-3.2-3B"</span>, quantization_config=bnb_config, device_map=<span class="tok-str">"auto"</span>,
+)
+<span class="tok-com"># ~4x smaller footprint, runs comfortably on consumer GPU / CPU-offload</span></code></pre>
+</div>
+
+<div class="prod">
+<span class="prod-tag gold">GO/GRPC SERVICE</span>
+<div class="prod-text">Quantized <b>Ollama llama3.2</b> is what makes Tier 3 viable to self-host at all — full-precision weights would have meant either prohibitive GPU spend or external API cost on every fallback call, undermining the "~95% resolved at zero external LLM cost" target.</div>
+</div>
+</article>
+
+<footer>ICPA · Insurance Claims Processing Automation — Vodafone &nbsp;//&nbsp; Go/gRPC Telecom Signaling Service &nbsp;//&nbsp; compiled for SanDisk SDE2 prep</footer>
+</main>
+
+<!-- RIGHT RAIL: SYSTEM TRACE -->
+<aside class="rail-right">
+<div class="trace-label">// system trace</div>
+<div class="trace-box">
+<div class="trace-sys">ICPA · TIER 1</div>
+<div class="trace-line">TF-IDF fast path<br><b>~60%</b> of traffic</div>
+</div>
+<div class="trace-box">
+<div class="trace-sys">ICPA · TIER 2</div>
+<div class="trace-line">ChromaDB RAG<br>+ Redis semantic cache<br><b>~85%</b> hit rate</div>
+</div>
+<div class="trace-box">
+<div class="trace-sys">ICPA · TIER 3</div>
+<div class="trace-line">Ollama llama3.2<br>fallback, <b>~12%</b> of traffic</div>
+</div>
+<div class="trace-box">
+<div class="trace-sys gold">GO/GRPC SERVICE</div>
+<div class="trace-line">Telecom signaling<br><b>10K+ RPS</b><br>separate from ICPA</div>
+</div>
+</aside>
+
+</div>
+
+</body>
+</html>
